@@ -51,7 +51,6 @@ function list() {
 function check() {
     if(todos.length > 0) {
         const index = readlineSync.keyInSelect(todos.map(todo => todo.name), 'What todo do you want to check/uncheck? ');
-        console.log(todos[index].check);
         todos[index].check = !todos[index].check;
     } else {
         console.log("No todo to uncheck");
