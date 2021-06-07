@@ -62,7 +62,7 @@ function check() {
 function remove() {
     if(todos.length > 0) {
         const index = readlineSync.keyInSelect(todos.map(todo => todo.name), '\nWhat todo do you want to remove? ');
-        todos.splice(index);
+        todos.splice(index, 1);
     } else {
         console.log("No todo to remove");
         readlineSync.promptCL();
