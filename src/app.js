@@ -1,8 +1,9 @@
 import chalk from 'chalk';
 import readlineSync from 'readline-sync';
+import fs from 'fs';
 
 let running = true;
-const todos = [];
+let data = { todos : [] };
 
 function app() {
     const options = ['add', 'list', 'check', 'remove'];
@@ -29,14 +30,16 @@ function app() {
             running = false;
             break;
     }
+    fileWrite()
 }
+
 function add() {
-    todos.push({name: readlineSync.question('What do you want to do? '), check : false});
+    data.todos.push({name: readlineSync.question('What do you want to do? '), check : false});
 }
 
 function list() {
     console.log("======================");
-    todos.forEach((todo) => {
+    data.todos.forEach((todo) => {
         if(todo.check){
             console.log(chalk.green(todo.name))
         } else {
@@ -49,9 +52,9 @@ function list() {
 }
 
 function check() {
-    if(todos.length > 0) {
-        const index = readlineSync.keyInSelect(todos.map(todo => todo.name), 'What todo do you want to check/uncheck? ');
-        todos[index].check = !todos[index].check;
+    if(data.todos.length > 0) {
+        const index = readlineSync.keyInSelect(data.todos.map(todo => todo.name), 'What todo do you want to check/uncheck? ');
+        data.todos[index].check = !data.todos[index].check;
     } else {
         console.log("No todo to uncheck");
         readlineSync.promptCL();
@@ -59,14 +62,26 @@ function check() {
 }
 
 function remove() {
-    if(todos.length > 0) {
-        const index = readlineSync.keyInSelect(todos.map(todo => todo.name), '\nWhat todo do you want to remove? ');
-        todos.splice(index, 1);
+    if(data.todos.length > 0) {
+        const index = readlineSync.keyInSelect(data.todos.map(todo => todo.name), '\nWhat todo do you want to remove? ');
+        data.todos.splice(index, 1);
     } else {
         console.log("No todo to remove");
         readlineSync.promptCL();
     }
 }
+
+function fileLoader() {
+    fs.existsSync("todos.json")
+    ? data = {...JSON.parse(fs.readFileSync('todos.json',{encoding:'utf8', flag:'r'}))}
+    : fs.writeFileSync( 'todos.json', JSON.stringify(data), { encoding: "utf8",flag: "w"})
+}
+
+function fileWrite() {
+    fs.writeFileSync( 'todos.json', JSON.stringify(data), { encoding: "utf8",flag: "w"})
+}
+
+fileLoader()
 
 while(running){
     app();
